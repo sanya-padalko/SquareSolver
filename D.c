@@ -83,6 +83,7 @@ int solve_equation(double *buf,
 {
     double a, b, c;
     unpack_massive(buf, a, b, c);
+
     if (equal(a))
     {
         int count_roots = solve_linear_equation(b, c, x1);
@@ -109,6 +110,7 @@ void input(double* buf)
 {
     double a, b, c;
     unpack_massive(buf, a, b, c);
+
     char ch = 0;
     while (scanf("%lg %lg %lg", &a, &b, &c) != 3)
     {
@@ -118,14 +120,62 @@ void input(double* buf)
     pack_in_massive(buf, a, b, c);
 }
 
-void print_equation(double a, double b, double c)
+void print_linear_equation(double b, double c)
 {
-
+    if (equal(c) && equal(b))
+    {
+        printf("0 = 0\n");
+        return;
+    }
+    if (equal(c))
+    {
+        printf("%fx = 0\n", b);
+        return;
+    }
+    if (equal(b))
+    {
+        printf("%f = 0\n", c);
+        return;
+    }
+    printf("%fx + %f = 0\n", b, c);
 }
 
-void output(int count_roots, double &x1, double &x2)
+void print_square_equation(double a, double b, double c)
 {
-    //printf("Equation: %fx^2 + %fx + %f = 0\n", a, b, c);
+    printf("%fx^2", a);
+    if (!equal(b))
+    {
+        printf(" + %fx", b);
+    }
+    if (!equal(c))
+    {
+        printf(" + %f", c);
+    }
+    printf(" = 0\n");
+}
+
+void print_equation(double* buf)
+{
+    double a, b, c;
+    unpack_massive(buf, a, b, c);
+
+    printf("Equation: ");
+    if (equal(a))
+    {
+        print_linear_equation(b, c);
+        return;
+    }
+    if (!equal(a) && !equal(b) && equal(c))
+    {
+        printf("%fx^2 + %fx = 0\n", a, b);
+        return;
+    }
+    print_square_equation(a, b, c);
+}
+
+void output(int count_roots, double &x1, double &x2, double* buf)
+{
+    print_equation(buf);
     switch (count_roots)
     {
         case INF_ROOTS:
@@ -161,7 +211,8 @@ int main() {
 
         assert(x1 != NAN);
         assert(x2 != NAN);
-        output(count_roots, x1, x2);
+
+        output(count_roots, x1, x2, buf);
         printf("\n");
     }
     return 0;
