@@ -7,6 +7,7 @@ const int INF_ROOTS = (int)1e9;
 const int NO_ROOTS = 0;
 const int ONE_ROOT = 1;
 const int TWO_ROOTS = 2;
+const int PROBLEM = 3;
 
 const double eps = 1e-6;
 
@@ -52,8 +53,10 @@ void pack_in_massive(double* mas, double &a, double &b, double&c)
 int solve_square_equation(double *buf,
                           double* x1, double* x2)
 {
-    assert(x1);
-    assert(x2);
+    if (!x1 || !x2)
+    {
+        return PROBLEM;
+    }
 
     double a, b, c;
     unpack_massive(buf, a, b, c);
@@ -245,6 +248,11 @@ void print_equation(double* buf)
     print_square_equation(a, b, c);
 }
 
+void print_problem()
+{
+    printf("Something went wrong\n");
+}
+
 void output(int count_roots, double &x1, double &x2, double* buf)
 {
     print_equation(buf);
@@ -263,7 +271,7 @@ void output(int count_roots, double &x1, double &x2, double* buf)
             printf("Two roots: %f %f\n", x1, x2);
             break;
         default:
-            printf("Something went wrong\n");
+            print_problem();
     }
 }
 
@@ -281,8 +289,11 @@ int main() {
         double x1 = NAN, x2 = NAN;
         int count_roots = solve_equation(buf, &x1, &x2);
 
-        assert(x1 != NAN);
-        assert(x2 != NAN);
+        if (x1 == NAN || x2 == NAN)
+        {
+            print_problem();
+            continue;
+        }
 
         output(count_roots, x1, x2, buf);
         printf("\n");
